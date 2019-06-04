@@ -12,7 +12,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
-        fields = ('coupon_id','coupon_title','coupon_class','coupon_content')
+        fields = ('coupon_id','coupon_title','coupon_class','coupon_content','coupon_price')
 
 class MusicSerializer(serializers.ModelSerializer):
     class Meta:

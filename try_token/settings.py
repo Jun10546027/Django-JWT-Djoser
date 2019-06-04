@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-import datetime
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,7 +26,8 @@ SECRET_KEY = '72#jc)ljx@)@qvx_av9fc=i%jxtwe0g=t)bplo0j)@_as7t5!9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+#利於使用ngrok測試
+ALLOWED_HOSTS = ["*"]
 
 JWT_AUTH = {
     # Authorization:Token xxx
@@ -62,7 +63,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'test_token',
     'djoser', #方便創建使用者的套件
+    'django_filters', #自定義過濾器
 ]
+
 
 # DJOSER = {
 #     'SERIALIZERS': {
@@ -70,12 +73,15 @@ INSTALLED_APPS = [
 #     },
 # }
 
+#設定token時效
+import datetime
+
 JWT_AUTH = {
     #允不允許重新刷新
     'JWT_ALLOW_REFRESH': True,
 
     #失效時間(有動還是會失效)
-    # 'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(seconds=30),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30),
     #失效時間(都不動的話)
     # 'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=10),
 }
