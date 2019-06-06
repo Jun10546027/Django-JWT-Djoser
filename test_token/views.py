@@ -88,10 +88,3 @@ class UserFavViewset(viewsets.GenericViewSet
         # 只能看到自己的收藏，不能看到別人的
         return UserFav.objects.filter(user=self.request.user)
 
-
-
-#eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6Imp1biIsImV4cCI6MTU1OTQwODYwNiwiZW1haWwiOiIxMjNAMTMyLjEyIn0.T1a4IUlW3F5ysUk3f5tOV7GMG_3Uesbpfl3BPhv367Y
-
-#curl -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6Imp1biIsImV4cCI6MTU1OTQwODYwNiwiZW1haWwiOiIxMjNAMTMyLjEyIn0.T1a4IUlW3F5ysUk3f5tOV7GMG_3Uesbpfl3BPhv367Y" http://localhost:8000/music/
-
-#curl http://localhost:8000/music/
