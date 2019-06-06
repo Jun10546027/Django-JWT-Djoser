@@ -6,12 +6,13 @@ from rest_framework_jwt.views import refresh_jwt_token
 from rest_framework_jwt.views import verify_jwt_token
 from rest_framework.routers import DefaultRouter
 
-from test_token.views import MusicViewSet,CouponViewSet,UserViewSet
+from test_token.views import MusicViewSet,CouponViewSet,UserViewSet,UserFavViewset
 
 router = DefaultRouter()
 router.register(r'music', MusicViewSet, base_name='music')
 router.register(r'coupon',CouponViewSet,base_name='coupon')
 router.register(r'users',UserViewSet,base_name='user')
+router.register(r'userfavs', UserFavViewset, base_name="userfavs")
 
 urlpatterns = [
     path("",include(router.urls)),

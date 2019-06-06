@@ -3,10 +3,14 @@ from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from rest_framework import status,generics
 
-from .models import Music,Coupon,User
-from .serializers import MusicSerializer ,CouponSerializer,UserSerializer
+#permission(用於我的最愛)
+from util.permission import IsOwnerOrReadOnly
+from rest_framework.response import Response
+from rest_framework import status,generics,mixins
+
+from .models import Music,Coupon,User,UserFav
+from .serializers import MusicSerializer ,CouponSerializer,UserSerializer ,UserFavSerializer
 
 #設定分頁
 from rest_framework.pagination import PageNumberPagination
@@ -64,6 +68,27 @@ class CouponViewSet(viewsets.ModelViewSet):
     #ordering_fields -->  設定可排序的參數      ordering  ->  默認排序
     ordering_fields = ('coupon_price',)
     ordering=('coupon_title',)
+
+#我的最愛
+class UserFavViewset(viewsets.GenericViewSet
+                    ,mixins.RetrieveModelMixin
+                    , mixins.ListModelMixin
+                    , mixins.CreateModelMixin
+                    , mixins.DestroyModelMixin):
+
+    queryset = UserFav.objects.all()
+    serializer_class = UserFavSerializer
+
+    #透過自定permission，來判斷使用者是誰
+    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
+    #因為在serializers 是 coupons ->所以這裡不是coupon_id
+    lookup_field = 'coupons_id'
+
+    def get_queryset(self):
+        # 只能看到自己的收藏，不能看到別人的
+        return UserFav.objects.filter(user=self.request.user)
+
+
 
 #eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6Imp1biIsImV4cCI6MTU1OTQwODYwNiwiZW1haWwiOiIxMjNAMTMyLjEyIn0.T1a4IUlW3F5ysUk3f5tOV7GMG_3Uesbpfl3BPhv367Y
 
