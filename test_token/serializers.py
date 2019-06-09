@@ -13,9 +13,18 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'email', 'name', 'last_name', 'birthday', 'password')
 
 class CouponSerializer(serializers.ModelSerializer):
+
+    # image_url = serializers.SerializerMethodField('get_url')
+    coupon_img = serializers.ImageField(required=False,max_length=None,
+                                     allow_empty_file=True, use_url=True)
+    print(coupon_img)
+
     class Meta:
         model = Coupon
-        fields = ('coupon_id','coupon_title','coupon_class','coupon_content','coupon_price')
+        fields = ('coupon_id','coupon_title','coupon_class','coupon_content','coupon_price','coupon_img')
+
+    # def get_url(self, obj):
+    #     return str(obj.coupon_img.url)
 
 class UserFavSerializer(serializers.ModelSerializer):
     #獲取當前使用者是誰

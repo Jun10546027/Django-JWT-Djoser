@@ -19,6 +19,7 @@ class Coupon(models.Model):
     coupon_title = models.CharField("優惠卷標題",max_length=150)
     coupon_class = models.CharField(max_length=20)
     coupon_content = models.CharField(max_length=200)
+    coupon_img = models.ImageField(upload_to='coupons', blank=True,null=True)
     coupon_create_at = models.DateField(auto_now_add=True)
 
     class Meta:
@@ -28,6 +29,7 @@ class Coupon(models.Model):
 
     def __str__(self):
         return self.coupon_title
+
 
 #使用者收藏
 class UserFav(models.Model):

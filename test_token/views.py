@@ -69,6 +69,8 @@ class CouponViewSet(viewsets.ModelViewSet):
     ordering_fields = ('coupon_price',)
     ordering=('coupon_title',)
 
+
+
 #我的最愛
 class UserFavViewset(viewsets.GenericViewSet
                     ,mixins.RetrieveModelMixin
@@ -87,4 +89,3 @@ class UserFavViewset(viewsets.GenericViewSet
     def get_queryset(self):
         # 只能看到自己的收藏，不能看到別人的
         return UserFav.objects.filter(user=self.request.user)
-
