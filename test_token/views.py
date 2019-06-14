@@ -7,7 +7,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 #permission(用於我的最愛)
 from util.permission import IsOwnerOrReadOnly
 from rest_framework.response import Response
-from rest_framework import status,generics,mixins
+from rest_framework import status,generics,mixins,reverse
 
 from .models import Music,Coupon,User,UserFav
 from .serializers import MusicSerializer ,CouponSerializer,UserSerializer ,UserFavSerializer
@@ -21,6 +21,69 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 #設定搜尋，排序
 from rest_framework.filters import SearchFilter , OrderingFilter
+
+# to post activate
+from rest_framework.views import APIView
+import requests
+
+#隨機密碼
+from .random_passwd import RandomPassword
+
+from django.contrib.auth.tokens import default_token_generator
+
+from templated_mail.mail import BaseEmailMessage
+
+from djoser import utils
+from djoser.conf import settings
+
+
+class PasswordResetEmail(BaseEmailMessage):
+    template_name = 'email/password_reset.html'
+
+    def get_context_data(self):
+        context = super(PasswordResetEmail, self).get_context_data()
+
+        user = context.get('user')
+        context['uid'] = utils.encode_uid(user.pk)
+        context['token'] = default_token_generator.make_token(user)
+        context['url'] = settings.PASSWORD_RESET_CONFIRM_URL.format(**context)
+        # context['new_password'] = RandomPassword() ##修改的地方
+        return context
+
+##激活帳號
+class ActivateUserByGet(APIView):
+    def get (self, request, uid, token):
+
+            #獲取網址中的uid和token，透過requests中的post方法自行post進去做激活
+            protocol = 'https://' if request.is_secure() else 'http://'
+            web_url = protocol + request.get_host()
+            post_url = web_url + "/auth/users/activate/"
+            post_data = {'uid': uid, 'token': token}
+            result = requests.post(post_url, data = post_data)
+
+            #判斷成功激活或失敗
+            if result.status_code == 204:
+                return Response({'detail': 'all good sir'})
+            else:
+                return Response(result.json())
+
+##重設密碼
+class ResetPasswordUserByGet(APIView):
+
+    def get (self, request, uid, token):
+            #獲取網址中的uid和token，透過requests中的post方法自行post進去做激活
+            new_password = RandomPassword()
+            protocol = 'https://' if request.is_secure() else 'http://'
+            web_url = protocol + request.get_host()
+            post_url = web_url + "/auth/password/reset/confirm/"
+            post_data = {'uid': uid, 'token': token,'new_password':new_password}
+            result = requests.post(post_url, data = post_data)
+
+            #判斷成功激活或失敗
+            if result.status_code == 204:
+                return Response({'new_password':new_password})
+            else:
+                return Response(result.json())
 
 ##Coupont自訂分頁
 class CouponPagination(PageNumberPagination):

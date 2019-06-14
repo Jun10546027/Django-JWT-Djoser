@@ -17,7 +17,6 @@ class CouponSerializer(serializers.ModelSerializer):
     # image_url = serializers.SerializerMethodField('get_url')
     coupon_img = serializers.ImageField(required=False,max_length=None,
                                      allow_empty_file=True, use_url=True)
-    print(coupon_img)
 
     class Meta:
         model = Coupon

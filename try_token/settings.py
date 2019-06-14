@@ -29,29 +29,59 @@ DEBUG = True
 #利於使用ngrok測試
 ALLOWED_HOSTS = ["*"]
 
-JWT_AUTH = {
-    # Authorization:Token xxx
-    'JWT_AUTH_HEADER_PREFIX': 'Token',
-}
+#=================django-restframework-jwt=======================
+#import datetime
+# JWT_AUTH = {
+#     # Authorization:Token xxx
+#     'JWT_AUTH_HEADER_PREFIX': 'Token',
+# }
+# JWT_AUTH = {
+#     'JWT_ALLOW_REFRESH': True,
+#     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(seconds=30),
+#     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=10),
+# }
+#=================django-restframework-jwt=======================
+
+
 
 # Application definition
 
+#setting AUTHENTICATION way
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+
+        # ---------rest 第三方登入-----------------------------------------------------------------
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'rest_framework_social_oauth2.authentication.SocialAuthentication',
+        # ---------rest 第三方登入-----------------------------------------------------------------
     ),
 }
 
-JWT_AUTH = {
-    'JWT_ALLOW_REFRESH': True,
-    # 'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(seconds=30),
-    # 'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=10),
+#=================SimpleJWT===================================
+#setting SimpleJWT  https://github.com/davesque/django-rest-framework-simplejwt
+from datetime import timedelta
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+
+    # how long access/refresh tokens are valid
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+
+    #當使用refresh時token時間限制回歸初始值
+    #blacklist，使用過refresh後將他存進blacklist，使他不會再被使用 https://learnku.com/articles/12679/jwt-auth-blacklist-function
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+
+    #允許重複的名子，通常推薦使用不常更改的欄位
+    'USER_ID_FIELD': 'id',
+    #generated tokens include a "user_id"
+    'USER_ID_CLAIM': 'user_id',
+
 }
+#=================SimpleJWT===================================
+
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -60,8 +90,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework_simplejwt.token_blacklist', #使上面的simpleJWT裡的設定BLACKLIST_AFTER_ROTATION生效
     'rest_framework',
     'test_token',
+
+    #==rest 第三方登入==
+    'oauth2_provider',
+    'social_django',
+    'rest_social_auth',
+    # 'rest_framework_social_oauth2',
+    #==rest 第三方登入==
+
     'djoser', #方便創建使用者的套件
     'django_filters', #自定義過濾器
 ]
@@ -73,18 +112,18 @@ INSTALLED_APPS = [
 #     },
 # }
 
-#設定token時效
-import datetime
-
-JWT_AUTH = {
-    #允不允許重新刷新
-    'JWT_ALLOW_REFRESH': True,
-
-    #失效時間(有動還是會失效)
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30),
-    #失效時間(都不動的話)
-    # 'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=10),
-}
+# #設定token時效
+# import datetime
+#
+# JWT_AUTH = {
+#     #允不允許重新刷新
+#     'JWT_ALLOW_REFRESH': True,
+#
+#     #失效時間(有動還是會失效)
+#     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30),
+#     #失效時間(都不動的話)
+#     # 'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=10),
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -94,6 +133,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware', #第三方設定
 ]
 
 ROOT_URLCONF = 'try_token.urls'
@@ -109,6 +149,11 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                #-----------rest 第三方登入--------------------------------------------------
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
+                #-----------rest 第三方登入--------------------------------------------------
             ],
         },
     },
@@ -128,8 +173,27 @@ DATABASES = {
         'PASSWORD': 'April29love',
         'HOST': '127.0.0.1',
         'PORT': '3306',
+        #第三方登入。。。。不設定migration會出錯
+        'OPTIONS': {'init_command': 'SET default_storage_engine=INNODB;'}
     },
 }
+
+##允許使用得第三方登入
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+
+    # django-rest-framework-social-oauth2
+    'rest_framework_social_oauth2.backends.DjangoOAuth2',
+    # Django
+    'django.contrib.auth.backends.ModelBackend',
+)
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY ='720159096565-0d5fsgmejq7nib0cm18a1bc35ofe3f2o.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'XCOzwf5_XU6gZGFbt8gU3WgW'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -177,3 +241,24 @@ STATIC_URL = '/static/'
 
 MEDIA_URL= '/media/'
 MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'jmm.chang@gmail.com'
+EMAIL_HOST_PASSWORD = '88455488'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+DJOSER = {
+    'SET_PASSWORD_RETYPE' : True,
+    'LOGOUT_ON_PASSWORD_CHANGE' : True,
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND' : True,
+    'PASSWORD_RESET_CONFIRM_URL':'auth/password/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'auth/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SERIALIZERS': {
+
+    },
+}

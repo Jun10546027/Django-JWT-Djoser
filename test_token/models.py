@@ -7,6 +7,7 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     created = models.DateTimeField(auto_now_add=True,verbose_name="建立時間")
     gender=models.CharField(max_length=1,verbose_name="性別")
+    email = models.EmailField(unique=True)
     REQUIRED_FIELDS = ["email", "gender"]
 
     class Meta:
