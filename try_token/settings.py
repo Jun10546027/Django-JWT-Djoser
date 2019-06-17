@@ -51,10 +51,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
 
-        # ---------rest 第三方登入-----------------------------------------------------------------
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-        'rest_framework_social_oauth2.authentication.SocialAuthentication',
-        # ---------rest 第三方登入-----------------------------------------------------------------
+        # # ---------rest 第三方登入-----------------------------------------------------------------
+        # 'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        # 'rest_framework_social_oauth2.authentication.SocialAuthentication',
+        # # ---------rest 第三方登入-----------------------------------------------------------------
     ),
 }
 
@@ -94,12 +94,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'test_token',
 
-    #==rest 第三方登入==
-    'oauth2_provider',
-    'social_django',
-    'rest_social_auth',
-    # 'rest_framework_social_oauth2',
-    #==rest 第三方登入==
+    # #==rest 第三方登入==
+    # 'oauth2_provider',
+    # 'social_django',
+    # 'rest_social_auth',
+    # # 'rest_framework_social_oauth2',
+    # #==rest 第三方登入==
 
     'djoser', #方便創建使用者的套件
     'django_filters', #自定義過濾器
@@ -133,7 +133,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware', #第三方設定
+    # 'social_django.middleware.SocialAuthExceptionMiddleware', #第三方設定
 ]
 
 ROOT_URLCONF = 'try_token.urls'
@@ -150,10 +150,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
 
-                #-----------rest 第三方登入--------------------------------------------------
-                'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect',
-                #-----------rest 第三方登入--------------------------------------------------
+                # #-----------rest 第三方登入--------------------------------------------------
+                # 'social_django.context_processors.backends',
+                # 'social_django.context_processors.login_redirect',
+                # #-----------rest 第三方登入--------------------------------------------------
             ],
         },
     },
@@ -178,22 +178,22 @@ DATABASES = {
     },
 }
 
-##允許使用得第三方登入
-AUTHENTICATION_BACKENDS = (
-    'social_core.backends.facebook.FacebookOAuth2',
-    'social_core.backends.github.GithubOAuth2',
-    'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.twitter.TwitterOAuth',
-
-    # django-rest-framework-social-oauth2
-    'rest_framework_social_oauth2.backends.DjangoOAuth2',
-    # Django
-    'django.contrib.auth.backends.ModelBackend',
-)
-SOCIAL_AUTH_URL_NAMESPACE = 'social'
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY ='720159096565-0d5fsgmejq7nib0cm18a1bc35ofe3f2o.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'XCOzwf5_XU6gZGFbt8gU3WgW'
+# ##允許使用得第三方登入
+# AUTHENTICATION_BACKENDS = (
+#     'social_core.backends.facebook.FacebookOAuth2',
+#     'social_core.backends.github.GithubOAuth2',
+#     'social_core.backends.google.GoogleOAuth2',
+#     'social_core.backends.twitter.TwitterOAuth',
+#
+#     # django-rest-framework-social-oauth2
+#     'rest_framework_social_oauth2.backends.DjangoOAuth2',
+#     # Django
+#     'django.contrib.auth.backends.ModelBackend',
+# )
+# SOCIAL_AUTH_URL_NAMESPACE = 'social'
+#
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY ='720159096565-0d5fsgmejq7nib0cm18a1bc35ofe3f2o.apps.googleusercontent.com'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'XCOzwf5_XU6gZGFbt8gU3WgW'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

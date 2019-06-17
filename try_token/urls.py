@@ -22,8 +22,8 @@ urlpatterns = [
     path('auth/activate/<str:uid>/<str:token>/', ActivateUserByGet.as_view()),
     path('auth/password/reset/confirm/<str:uid>/<str:token>/',ResetPasswordUserByGet.as_view()),
 
-    path('api/login/', include('rest_social_auth.urls_jwt_pair')),
-    path('api/login/', include('rest_social_auth.urls_jwt_sliding')),
+    # path('api/login/', include('rest_social_auth.urls_jwt_pair')),
+    # path('api/login/', include('rest_social_auth.urls_jwt_sliding')),
     # path('auth/', include('rest_framework_social_oauth2.urls')),
     # path('social-auth/', include('social_django.urls', namespace='social')),
 
